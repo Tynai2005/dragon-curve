@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <label>Введите N: <input type="number" id="n" /></label>
+    <br /><br />
+    <input type="button" id="gen" value="Сгенерировать" />
+    <div id="out"></div>
+    <div id="cont" style="position: relative; margin-bottom: 300px"></div>
+    <style>
+      .elem {
+        position: absolute;
+        background-color: black;
+      }
+    </style>
+    <script>
+      document.getElementById("gen").onclick = genHandler;
+
+      //       повернуть направо, если k дает остаток 1 от деления на 4;
+      // повернуть налево, если k дает остаток 3 от деления на 4;
+      // поступить так же, как после отрезка с номером k/2 , если k четно.
+
+      const cont = document.getElementById("cont");
+
+      function genHandler() {
+        let n = +document.getElementById("n").value,
+          array = [1];
+
+        function drawer() {
+          let array2 = JSON.parse(JSON.stringify(array));
+          array.push(1);
+          let newArr = array2.map((el) => {
+            if (el === 1) {
+              return 3;
+            } else {
+              return 1;
+            }
+          });
+          array = array.concat(newArr.reverse());
+        }
+
+        for (let i = 0; i < n - 1; i++) {
+          drawer();
+        }
+
+        let prev = {
+          type: "hor",
+          direction: "right",
+          end: [700, 704],
+        };
+
+        let vl = "height: 4px; width: 1px;";
+        let hl = "height: 1px; width: 4px;";
+
+        let div = document.createElement("div");
+        div.classList.add("elem");
+        div.style.cssText = hl + `top: 700px ;left:700px`;
+        cont.append(div);
+
+        array.map((e) => {
+          let div = document.createElement("div");
+          div.classList.add("elem");
+
+          if (prev.type?.length > 0) {
+            if (e === 3) {
+              if (prev.type === "hor") {
+                if (prev.direction === "right") {
+                  div.style.cssText =
+                    vl + `top:${prev.end[0] - 4}px;left:${prev.end[1]}px`;
+                  prev.end = [prev.end[0] - 4, prev.end[1]];
+                  prev.type = "ver";
+                  prev.direction = "top";
+                } else {
+                  div.style.cssText =
+                    vl + `top:${prev.end[0]}px;left:${prev.end[1]}px`;
+                  prev.end = [prev.end[0] + 4, prev.end[1]];
+                  prev.type = "ver";
+                  prev.direction = "bottom";
+                }
+              } else {
+                if (prev.direction === "top") {
+                  div.style.cssText =
+                    hl + `top:${prev.end[0]}px;left:${prev.end[1] - 4}px`;
+                  prev.end = [prev.end[0], prev.end[1] - 4];
+                  prev.type = "hor";
+                  prev.direction = "left";
+                } else {
+                  div.style.cssText =
+                    hl + `top:${prev.end[0]}px;left:${prev.end[1]}px`;
+                  prev.end = [prev.end[0], prev.end[1] + 4];
+                  prev.type = "hor";
+                  prev.direction = "right";
+                }
+              }
+            } else {
+              if (prev.type === "hor") {
+                if (prev.direction === "right") {
+                  div.style.cssText =
+                    vl + `top:${prev.end[0]}px;left:${prev.end[1]}px`;
+                  prev.end = [prev.end[0] + 4, prev.end[1]];
+                  prev.type = "ver";
+                  prev.direction = "bottom";
+                } else {
+                  div.style.cssText =
+                    vl + `top:${prev.end[0] - 4}px;left:${prev.end[1]}px`;
+                  prev.end = [prev.end[0] - 4, prev.end[1]];
+                  prev.type = "ver";
+                  prev.direction = "top";
+                }
+              } else {
+                if (prev.direction === "top") {
+                  div.style.cssText =
+                    hl + `top:${prev.end[0]}px;left:${prev.end[1]}px`;
+                  prev.end = [prev.end[0], prev.end[1] + 4];
+                  prev.type = "hor";
+                  prev.direction = "right";
+                } else {
+                  div.style.cssText =
+                    hl + `top:${prev.end[0]}px;left:${prev.end[1] - 4}px`;
+                  prev.end = [prev.end[0], prev.end[1] - 4];
+                  prev.type = "hor";
+                  prev.direction = "left";
+                }
+              }
+            }
+          } else {
+          }
+          cont.append(div);
+        });
+      }
+    </script>
+  </body>
+</html>
